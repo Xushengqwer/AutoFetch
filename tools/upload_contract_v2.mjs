@@ -86,17 +86,26 @@ async function uploadOne(item) {
   form.set("image", new Blob([imageBytes]), item.filename);
   form.set("reading", JSON.stringify(envelope));
 
-  const resp = await fetch(`${SITE}/api/import/reports`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${TOKEN}` },
-    body: form
-  });
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const resp = await fetch(`${SITE}/api/import/reports`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      body: form
+    });
 
-  const body = await resp.json().catch(() => null);
-  if (!resp.ok) {
+    const body = await resp.json().catch(() => null);
+    if (resp.ok) {
+      return { ...body.data, file: item.filename, battleAt, trusted: r.trusted };
+    }
+    if (resp.status === 429) {
+      const waitSec = Number(resp.headers.get("Retry-After")) || 3;
+      console.log(`  ⏳ 触发限速 (429)，等待 ${waitSec} 秒后重试...`);
+      await new Promise(res => setTimeout(res, (waitSec + 1) * 1000));
+      continue;
+    }
     throw new Error(`Upload failed (${resp.status}): ${JSON.stringify(body)}`);
   }
-  return { ...body.data, file: item.filename, battleAt, trusted: r.trusted };
+  throw new Error("429 重试次数超限");
 }
 
 try {
