@@ -1,8 +1,0 @@
-{
-  "max_count": 10,
-  "only_today": true,
-  "save_dir": "C:\\sanguo_report_collector\\战报导出",
-  "server_url": "",
-  "user_token": "",
-  "auto_upload": false
-}

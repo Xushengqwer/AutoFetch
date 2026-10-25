@@ -5,6 +5,8 @@ debug_steps/
 debug_追踪图/
 战报导出/
 scratch/
+config.json
+config.local.json
 
 # Temporary / debug screenshots
 annotated_live_view.png
