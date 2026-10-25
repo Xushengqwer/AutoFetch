@@ -1,0 +1,26 @@
+# Logs and runtime artifacts
+*.log
+latest_collector.log
+debug_steps/
+debug_追踪图/
+战报导出/
+scratch/
+
+# Temporary / debug screenshots
+annotated_live_view.png
+debug_aim_live.png
+debug_live_screen.png
+live_current_game.png
+战报*
+video_*/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
