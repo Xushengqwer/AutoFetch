@@ -4,6 +4,17 @@ import { join } from "node:path";
 import { loadImage, createNodeTextEngine } from "../recognize/node-io.ts";
 import { recognizeReport } from "../../lib/recognize/index.ts";
 
+const proxy = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
+if (proxy) {
+  try {
+    const { ProxyAgent, setGlobalDispatcher } = await import("undici");
+    setGlobalDispatcher(new ProxyAgent(proxy));
+    console.log(`[网络代理] 已配置代理分发器: ${proxy}`);
+  } catch (e) {
+    console.warn(`[网络代理] undici 代理配置跳过:`, e.message);
+  }
+}
+
 const CONFIG_PATH = "C:/sanguo_report_collector/config.local.json";
 const configRaw = await readFile(CONFIG_PATH, "utf-8");
 const config = JSON.parse(configRaw);
@@ -148,6 +159,7 @@ try {
       failedCount++;
       console.error(`  -> ❌ 失败: ${err.message}`);
     }
+    await new Promise(res => setTimeout(res, 1000));
   }
 
   console.log("\n" + "=".repeat(60));
